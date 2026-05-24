@@ -4,13 +4,14 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY ["ApplicantService.csproj", "."]
-RUN dotnet restore
-COPY . .
-RUN dotnet build -c Release -o /app/build
+COPY ["services/applicant-service/ApplicantService/ApplicantService/ApplicantService.csproj", "ApplicantService/"]
+RUN dotnet restore "ApplicantService/ApplicantService.csproj"
+COPY services/applicant-service/ApplicantService/ApplicantService/. ApplicantService/
+WORKDIR "/src/ApplicantService"
+RUN dotnet build "ApplicantService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish "ApplicantService.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
