@@ -1,4 +1,3 @@
-cat > .github/workflows/ci-cd.yml << 'EOF'
 name: LADVS CI/CD Pipeline
 
 on:
@@ -37,4 +36,3 @@ jobs:
           file: services/applicant-service/ApplicantService/ApplicantService/Dockerfile
           push: true
           tags: acrladvs.azurecr.io/applicant-service:${{ github.sha }}
-EOF
