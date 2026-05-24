@@ -1,0 +1,40 @@
+cat > .github/workflows/ci-cd.yml << 'EOF'
+name: LADVS CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, uat]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'
+      - name: Restore
+        run: dotnet restore services/applicant-service/ApplicantService/ApplicantService/ApplicantService.csproj
+      - name: Build
+        run: dotnet build services/applicant-service/ApplicantService/ApplicantService/ApplicantService.csproj --configuration Release
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to ACR
+        uses: docker/login-action@v2
+        with:
+          registry: acrladvs.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: services/applicant-service/ApplicantService/ApplicantService/Dockerfile
+          push: true
+          tags: acrladvs.azurecr.io/applicant-service:${{ github.sha }}
+EOF
