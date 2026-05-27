@@ -5,34 +5,66 @@ on:
     branches: [main, develop, uat]
 
 jobs:
-  build:
+  build-applicant-service:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0'
-      - name: Restore
+      - name: Restore ApplicantService
         run: dotnet restore services/applicant-service/ApplicantService/ApplicantService/ApplicantService.csproj
-      - name: Build
+      - name: Build ApplicantService
         run: dotnet build services/applicant-service/ApplicantService/ApplicantService/ApplicantService.csproj --configuration Release
 
-  docker:
+  build-application-service:
     runs-on: ubuntu-latest
-    needs: build
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0'
+      - name: Restore ApplicationService
+        run: dotnet restore services/application-service/ApplicationService/ApplicationService/ApplicationService.csproj
+      - name: Build ApplicationService
+        run: dotnet build services/application-service/ApplicationService/ApplicationService/ApplicationService.csproj --configuration Release
+
+  docker-applicant-service:
+    runs-on: ubuntu-latest
+    needs: build-applicant-service
+    steps:
+      - uses: actions/checkout@v4
       - name: Login to ACR
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: acrladvs.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
+      - name: Build and Push ApplicantService
+        uses: docker/build-push-action@v5
         with:
           context: .
-          file: services/applicant-service/ApplicantService/ApplicantService/Dockerfile
+          file: services/applicant-service/ApplicantService/ApplicantService/dockerfile
           push: true
           tags: acrladvs.azurecr.io/applicant-service:${{ github.sha }}
+
+  docker-application-service:
+    runs-on: ubuntu-latest
+    needs: build-application-service
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: acrladvs.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build and Push ApplicationService
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: services/application-service/ApplicationService/ApplicationService/dockerfile
+          push: true
+          tags: acrladvs.azurecr.io/application-service:${{ github.sha }}

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: applicant-service
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: applicant-service
+  template:
+    metadata:
+      labels:
+        app: applicant-service
+    spec:
+      containers:
+      - name: applicant-service
+        image: acrladvs.azurecr.io/applicant-service:49a61f10eccb32dce1a5caea20c550173c8d34e9
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: applicant-service
+  namespace: dev
+spec:
+  selector:
+    app: applicant-service
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer
