@@ -31,6 +31,19 @@ jobs:
       - name: Build ApplicationService
         run: dotnet build services/application-service/ApplicationService/ApplicationService/ApplicationService.csproj --configuration Release
 
+  build-document-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0'
+      - name: Restore DocumentService
+        run: dotnet restore services/document-service/DocumentService/DocumentService/DocumentService.csproj
+      - name: Build DocumentService
+        run: dotnet build services/document-service/DocumentService/DocumentService/DocumentService.csproj --configuration Release
+
   docker-applicant-service:
     runs-on: ubuntu-latest
     needs: build-applicant-service
@@ -68,3 +81,22 @@ jobs:
           file: services/application-service/ApplicationService/ApplicationService/dockerfile
           push: true
           tags: acrladvs.azurecr.io/application-service:${{ github.sha }}
+
+  docker-document-service:
+    runs-on: ubuntu-latest
+    needs: build-document-service
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: acrladvs.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build and Push DocumentService
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: services/document-service/DocumentService/DocumentService/dockerfile
+          push: true
+          tags: acrladvs.azurecr.io/document-service:${{ github.sha }}
