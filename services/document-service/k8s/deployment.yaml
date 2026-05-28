@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: application-service
+  name: document-service
   namespace: dev
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: application-service
+      app: document-service
   template:
     metadata:
       labels:
-        app: application-service
+        app: document-service
     spec:
       containers:
-      - name: application-service
-        image: acrladvs.azurecr.io/application-service:ff8021ea9e331e45dd2c5face145991144cf0676
+      - name: document-service
+        image: acrladvs.azurecr.io/document-service:latest
         ports:
         - containerPort: 8080
         env:
@@ -25,11 +25,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: application-service
+  name: document-service
   namespace: dev
 spec:
   selector:
-    app: application-service
+    app: document-service
   ports:
   - port: 80
     targetPort: 8080
