@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: document-service
-        image: acrladvs.azurecr.io/document-service:latest
+        image: acrladvs.azurecr.io/document-service:4ffdc9bf4315af4862e39e157fc9d4b5d1128288
         ports:
         - containerPort: 8080
         env:
