@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: admin-service
-        image: acrladvs.azurecr.io/admin-service:latest
+        image: acrladvs.azurecr.io/admin-service:3cf4ca6acf9ea37e7e342230a0dc3ccbd8da9ae5
         ports:
         - containerPort: 8080
         env:
