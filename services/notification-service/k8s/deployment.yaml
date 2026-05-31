@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: notification-service
-        image: acrladvs.azurecr.io/notification-service:latest
+        image: acrladvs.azurecr.io/notification-service:874e45b903f95449d87c244b5bd933a0b49d236b
         ports:
         - containerPort: 8080
         env:

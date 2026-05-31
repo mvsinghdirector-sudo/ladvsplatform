@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: application-service
-        image: acrladvs.azurecr.io/application-service:latest
+        image: acrladvs.azurecr.io/applicant-service:078fd61c5bf11c3eb50836875fe68867da871fc4
         ports:
         - containerPort: 8080
         env:
