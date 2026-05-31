@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: document-service
+  name: validation-service
   namespace: dev
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: document-service
+      app: validation-service
   template:
     metadata:
       labels:
-        app: document-service
+        app: validation-service
     spec:
       containers:
-      - name: document-service
-        image: acrladvs.azurecr.io/document-service:4ffdc9bf4315af4862e39e157fc9d4b5d1128288
+      - name: validation-service
+        image: acrladvs.azurecr.io/validation-service:3626037870b3cd5a8fed435190d3353c76c2c435
         ports:
         - containerPort: 8080
         env:
@@ -25,12 +25,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: document-service
+  name: validation-service
   namespace: dev
 spec:
   selector:
-    app: document-service
+    app: validation-service
   ports:
   - port: 80
     targetPort: 8080
-  type: LoadBalancer
+  type: ClusterIP

@@ -32,7 +32,7 @@ builder.Services.AddScoped<IApplicantService, ApplicantServiceImpl>();
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
+builder.Services.AddScoped<IChatBotService, ChatBotService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
