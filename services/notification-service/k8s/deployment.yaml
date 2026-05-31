@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: document-service
+  name: notification-service
   namespace: dev
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: document-service
+      app: notification-service
   template:
     metadata:
       labels:
-        app: document-service
+        app: notification-service
     spec:
       containers:
-      - name: document-service
-        image: acrladvs.azurecr.io/document-service:4ffdc9bf4315af4862e39e157fc9d4b5d1128288
+      - name: notification-service
+        image: acrladvs.azurecr.io/notification-service:latest
         ports:
         - containerPort: 8080
         env:
@@ -25,11 +25,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: document-service
+  name: notification-service
   namespace: dev
 spec:
   selector:
-    app: document-service
+    app: notification-service
   ports:
   - port: 80
     targetPort: 8080

@@ -4,16 +4,16 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY ["services/document-service/DocumentService/DocumentService/DocumentService.csproj", "DocumentService/"]
-RUN dotnet restore "DocumentService/DocumentService.csproj"
-COPY services/document-service/DocumentService/DocumentService/. DocumentService/
-WORKDIR "/src/DocumentService"
-RUN dotnet build "DocumentService.csproj" -c Release -o /app/build
+COPY ["services/notification-service/NotificationService/NotificationService/NotificationService.csproj", "NotificationService/"]
+RUN dotnet restore "NotificationService/NotificationService.csproj"
+COPY services/notification-service/NotificationService/NotificationService/. NotificationService/
+WORKDIR "/src/NotificationService"
+RUN dotnet build "NotificationService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "DocumentService.csproj" -c Release -o /app/publish
+RUN dotnet publish "NotificationService.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "DocumentService.dll"]
+ENTRYPOINT ["dotnet", "NotificationService.dll"]
