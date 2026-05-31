@@ -57,6 +57,19 @@ jobs:
       - name: Build AdminService
         run: dotnet build services/admin-service/AdminService/AdminService/AdminService.csproj --configuration Release
 
+  build-notification-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0'
+      - name: Restore NotificationService
+        run: dotnet restore services/notification-service/NotificationService/NotificationService/NotificationService.csproj
+      - name: Build NotificationService
+        run: dotnet build services/notification-service/NotificationService/NotificationService/NotificationService.csproj --configuration Release
+
   docker-applicant-service:
     runs-on: ubuntu-latest
     needs: build-applicant-service
@@ -132,3 +145,22 @@ jobs:
           file: services/admin-service/AdminService/AdminService/dockerfile
           push: true
           tags: acrladvs.azurecr.io/admin-service:${{ github.sha }}
+
+  docker-notification-service:
+    runs-on: ubuntu-latest
+    needs: build-notification-service
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: acrladvs.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build and Push NotificationService
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: services/notification-service/NotificationService/NotificationService/dockerfile
+          push: true
+          tags: acrladvs.azurecr.io/notification-service:${{ github.sha }}
